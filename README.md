@@ -16,6 +16,7 @@ python3 train.py
 
 # Results 
 
+
 input 
 
 label 
@@ -23,3 +24,11 @@ label
 prediction
 
 
+
+![Screenshot from 2023-12-14 15-50-12](https://github.com/Shirshak-Ach/3D-Segmentation/assets/59020885/57fae789-4af6-46e1-a6b7-aa6300e1cab7)
+
+![Screenshot from 2023-12-14 15-49-31](https://github.com/Shirshak-Ach/3D-Segmentation/assets/59020885/b709ec92-1dbb-41a7-ac60-499925786495)
+
+![Screenshot from 2023-12-14 15-48-45](https://github.com/Shirshak-Ach/3D-Segmentation/assets/59020885/84c4aa91-50d8-4db2-b076-369dab03d86c)
+
+![Screenshot from 2023-12-14 15-48-32](https://github.com/Shirshak-Ach/3D-Segmentation/assets/59020885/aafa6e29-d123-4bc9-9d27-216d8d383b4f)
