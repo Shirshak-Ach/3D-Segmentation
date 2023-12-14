@@ -110,7 +110,8 @@ def training_phase(train_dataloader, test_dataloader):
             f'Test Jaccard: {epoch_test_jaccard.item():.4f}, '
             f'Test Accuracy: {epoch_test_acc.item():.4f}, ')
         
-    return model,num_epochs, overall_train_loss_per_epoch, overall_train_jaccard_per_epoch, overall_train_acc_per_epoch, overall_test_loss_per_epoch, overall_test_jaccard_per_epoch, overall_test_acc_per_epoch
+        
+    return model,num_epochs,optimizer, train_loss, overall_train_loss_per_epoch, overall_train_jaccard_per_epoch, overall_train_acc_per_epoch, overall_test_loss_per_epoch, overall_test_jaccard_per_epoch, overall_test_acc_per_epoch
 
     
 
@@ -123,12 +124,11 @@ if __name__ == '__main__':
 
     train_dataloader, test_dataloader = get_from_loader(X_train, y_train, X_test, y_test)
 
-    model, num_epochs, overall_train_loss_per_epoch, overall_train_jaccard_per_epoch, overall_train_acc_per_epoch, overall_test_loss_per_epoch, overall_test_jaccard_per_epoch, overall_test_acc_per_epoch = training_phase(train_dataloader,test_dataloader)
+    model, num_epochs,optimizer, loss, overall_train_loss_per_epoch, overall_train_jaccard_per_epoch, overall_train_acc_per_epoch, overall_test_loss_per_epoch, overall_test_jaccard_per_epoch, overall_test_acc_per_epoch = training_phase(train_dataloader,test_dataloader)
 
     plot_loss(num_epochs, overall_train_loss_per_epoch, overall_test_loss_per_epoch)
     plot_IOU_Jaccard(num_epochs, overall_train_jaccard_per_epoch, overall_test_jaccard_per_epoch)
     plot_Accuracy(num_epochs, overall_train_acc_per_epoch, overall_test_acc_per_epoch)
-
 
     model.eval()
     with torch.no_grad():
@@ -161,6 +161,29 @@ if __name__ == '__main__':
     plt.title('Prediction on test image')
     plt.imshow(y_pred[:,:, n_slice].cpu())
     plt.show()
+
+
+
+
+    # Save the model
+    torch.save({
+        'epoch': num_epochs,
+        'model_state_dict': model.state_dict(),
+        'optimizer_state_dict': optimizer.state_dict(),
+        'loss': loss,
+    }, 'saved_model.pth')
+
+    # Load the model
+    loaded_model = Build_UNet()
+    checkpoint = torch.load('saved_model.pth')
+    loaded_model.load_state_dict(checkpoint['model_state_dict'])
+    optimizer.load_state_dict(checkpoint['optimizer_state_dict'])
+    epoch = checkpoint['epoch']
+    loss = checkpoint['loss']
+
+
+
+
 
 
 

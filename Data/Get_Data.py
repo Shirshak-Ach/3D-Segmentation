@@ -8,10 +8,10 @@ import numpy as np
 
 
 
-t2_list = sorted(glob.glob('/home/shirshak/Desktop/brats20-dataset-training-validation/BraTS2020_TrainingData/MICCAI_BraTS2020_TrainingData/*/*t2.nii'))
-t1ce_list = sorted(glob.glob('/home/shirshak/Desktop/brats20-dataset-training-validation/BraTS2020_TrainingData/MICCAI_BraTS2020_TrainingData/*/*t1ce.nii'))
-flair_list = sorted(glob.glob('/home/shirshak/Desktop/brats20-dataset-training-validation/BraTS2020_TrainingData/MICCAI_BraTS2020_TrainingData/*/*flair.nii'))
-mask_list = sorted(glob.glob('/home/shirshak/Desktop/brats20-dataset-training-validation/BraTS2020_TrainingData/MICCAI_BraTS2020_TrainingData/*/*seg.nii'))
+t2_list = sorted(glob.glob('/media/shirshak/E076749B767473DE/3DsegmentationBRATSDataset/BraTS2020_TrainingData/MICCAI_BraTS2020_TrainingData/*/*t2.nii'))
+t1ce_list = sorted(glob.glob('/media/shirshak/E076749B767473DE/3DsegmentationBRATSDataset/BraTS2020_TrainingData/MICCAI_BraTS2020_TrainingData/*/*t1ce.nii'))
+flair_list = sorted(glob.glob('/media/shirshak/E076749B767473DE/3DsegmentationBRATSDataset/BraTS2020_TrainingData/MICCAI_BraTS2020_TrainingData/*/*flair.nii'))
+mask_list = sorted(glob.glob('/media/shirshak/E076749B767473DE/3DsegmentationBRATSDataset/BraTS2020_TrainingData/MICCAI_BraTS2020_TrainingData/*/*seg.nii'))
 
 
 def get_training_values():
