@@ -1,4 +1,3 @@
-from Data.Get_Data import get_testing_values, get_training_values
 from Data.prepare_dataloader import get_from_loader
 from Models.UNet_Architecture import Build_UNet
 import torch 
@@ -9,8 +8,13 @@ from tqdm import tqdm
 from operator import add
 from Plots.plot_figures import plot_Accuracy, plot_IOU_Jaccard, plot_loss
 import matplotlib.pyplot as plt
+import yaml
+import json
+import os 
 
-
+with open('./config/train_config.yaml', 'r') as config_file:
+    config_params = yaml.safe_load(config_file)
+    model_config = json.dumps(config_params)
 
 def training_phase(train_dataloader, test_dataloader):
     overall_train_loss_per_epoch = []
@@ -20,10 +24,19 @@ def training_phase(train_dataloader, test_dataloader):
     overall_train_acc_per_epoch = []
     overall_test_acc_per_epoch = []
 
-    num_epochs = 2
+    num_epochs = 500
     model = Build_UNet(num_classes=4).to(device)
     loss_function = DiceLoss()
     optimizer = optim.Adam(model.parameters(), lr=1e-5)
+
+    checkpoint_path = 'model.pth'
+    start_epoch = 1
+    if os.path.exists(checkpoint_path):
+        checkpoint = torch.load(checkpoint_path)
+        model.load_state_dict(checkpoint['model_state_dict'])
+        optimizer.load_state_dict(checkpoint['optimizer_state_dict'])
+        start_epoch = checkpoint['epoch'] + 1
+        print(f"Resuming training from epoch {start_epoch}")
 
 
     for epoch in range(1,num_epochs+1):
@@ -103,12 +116,12 @@ def training_phase(train_dataloader, test_dataloader):
 
 
         print(f'Epoch [{epoch + 1}/{num_epochs}], '
-            f'Train Loss: {train_loss.item():.4f}, '
-            f'Train Jaccard: {epoch_train_jaccard.item():.4f}, '
-            f'Train Accuracy: {epoch_train_acc.item():.4f}, '
-            f'Test Loss: {test_loss.item():.4f}, '
-            f'Test Jaccard: {epoch_test_jaccard.item():.4f}, '
-            f'Test Accuracy: {epoch_test_acc.item():.4f}, ')
+            f'Train Loss: {epoch_train_loss:.4f}, '
+            f'Train Jaccard: {epoch_train_jaccard:.4f}, '
+            f'Train Accuracy: {epoch_train_acc:.4f}, '
+            f'Test Loss: {epoch_test_loss:.4f}, '
+            f'Test Jaccard: {epoch_test_jaccard:.4f}, '
+            f'Test Accuracy: {epoch_test_acc:.4f}, ')
         
         
     return model,num_epochs,optimizer, train_loss, overall_train_loss_per_epoch, overall_train_jaccard_per_epoch, overall_train_acc_per_epoch, overall_test_loss_per_epoch, overall_test_jaccard_per_epoch, overall_test_acc_per_epoch
@@ -118,11 +131,15 @@ def training_phase(train_dataloader, test_dataloader):
 
 
 if __name__ == '__main__':
-    device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
-    X_train, y_train = get_training_values()
-    X_test, y_test = get_testing_values()
+    device = torch.device("cuda" if torch.cuda.is_available() else "cpu") 
 
-    train_dataloader, test_dataloader = get_from_loader(X_train, y_train, X_test, y_test)
+    t2_location = '/mnt/Enterprise2/shirshak/BraTS2020_TrainingData/MICCAI_BraTS2020_TrainingData/*/*t2.nii'
+    t1ce_location = '/mnt/Enterprise2/shirshak/BraTS2020_TrainingData/MICCAI_BraTS2020_TrainingData/*/*t1ce.nii'
+    flair_location = '/mnt/Enterprise2/shirshak/BraTS2020_TrainingData/MICCAI_BraTS2020_TrainingData/*/*flair.nii'
+    mask_location = '/mnt/Enterprise2/shirshak/BraTS2020_TrainingData/MICCAI_BraTS2020_TrainingData/*/*seg.nii'
+
+    train_dataloader, test_dataloader = get_from_loader(t2_location,t1ce_location,flair_location,mask_location)
+
 
     model, num_epochs,optimizer, loss, overall_train_loss_per_epoch, overall_train_jaccard_per_epoch, overall_train_acc_per_epoch, overall_test_loss_per_epoch, overall_test_jaccard_per_epoch, overall_test_acc_per_epoch = training_phase(train_dataloader,test_dataloader)
 
@@ -130,7 +147,12 @@ if __name__ == '__main__':
     plot_IOU_Jaccard(num_epochs, overall_train_jaccard_per_epoch, overall_test_jaccard_per_epoch)
     plot_Accuracy(num_epochs, overall_train_acc_per_epoch, overall_test_acc_per_epoch)
 
-    model.eval()
+    for batch_data in test_dataloader:
+        inputs = batch_data[0].float().to(device)
+        labels = batch_data[1].float().to(device)
+        outputs = model(inputs)
+
+    # model.eval()
     with torch.no_grad():
         x = X_test[0].to(device, dtype=torch.float32)
         y = y_test[0].to(device, dtype=torch.float32)

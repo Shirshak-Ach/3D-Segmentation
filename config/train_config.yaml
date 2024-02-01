@@ -1,0 +1,8 @@
+training_params:
+  train_batch_size:
+  val_batch_size:
+  learning_rate:
+  num_classes:
+  loss_function: ""
+  device_type: ""
+  optim: ""
