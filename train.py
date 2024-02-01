@@ -131,14 +131,25 @@ def training_phase(train_dataloader, test_dataloader):
 
 
 if __name__ == '__main__':
-    device = torch.device("cuda" if torch.cuda.is_available() else "cpu") 
 
-    t2_location = '/mnt/Enterprise2/shirshak/BraTS2020_TrainingData/MICCAI_BraTS2020_TrainingData/*/*t2.nii'
-    t1ce_location = '/mnt/Enterprise2/shirshak/BraTS2020_TrainingData/MICCAI_BraTS2020_TrainingData/*/*t1ce.nii'
-    flair_location = '/mnt/Enterprise2/shirshak/BraTS2020_TrainingData/MICCAI_BraTS2020_TrainingData/*/*flair.nii'
-    mask_location = '/mnt/Enterprise2/shirshak/BraTS2020_TrainingData/MICCAI_BraTS2020_TrainingData/*/*seg.nii'
+    # print(config_params["training_params"]["loss_function"])
+    train_batch_size = config_params["training_params"]["train_batch_size"]
+    val_batch_size = config_params["training_params"]["val_batch_size"]
+    learning_rate = config_params["training_params"]["learning_rate"]
+    num_classes = config_params["training_params"]["num_classes"]
+    loss_function = config_params["training_params"]["loss_function"]
+    device_type = config_params["training_params"]["device_type"]
+    optimizer = config_params["training_params"]["optimizer"]
 
-    train_dataloader, test_dataloader = get_from_loader(t2_location,t1ce_location,flair_location,mask_location)
+    # device_name = config_params[]
+    # device = torch.device("cuda" if torch.cuda.is_available() else "cpu") 
+
+    # t2_location = '/mnt/Enterprise2/shirshak/BraTS2020_TrainingData/MICCAI_BraTS2020_TrainingData/*/*t2.nii'
+    # t1ce_location = '/mnt/Enterprise2/shirshak/BraTS2020_TrainingData/MICCAI_BraTS2020_TrainingData/*/*t1ce.nii'
+    # flair_location = '/mnt/Enterprise2/shirshak/BraTS2020_TrainingData/MICCAI_BraTS2020_TrainingData/*/*flair.nii'
+    # mask_location = '/mnt/Enterprise2/shirshak/BraTS2020_TrainingData/MICCAI_BraTS2020_TrainingData/*/*seg.nii'
+
+    # train_dataloader, test_dataloader = get_from_loader(t2_location,t1ce_location,flair_location,mask_location)
 
 
     model, num_epochs,optimizer, loss, overall_train_loss_per_epoch, overall_train_jaccard_per_epoch, overall_train_acc_per_epoch, overall_test_loss_per_epoch, overall_test_jaccard_per_epoch, overall_test_acc_per_epoch = training_phase(train_dataloader,test_dataloader)
