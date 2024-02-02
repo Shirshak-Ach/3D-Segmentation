@@ -1,4 +1,5 @@
 from sklearn.metrics import accuracy_score, f1_score, jaccard_score, precision_score, recall_score
+import numpy as np
 
 def calculate_metrics(y_pred, y_true):
     """ Ground truth """

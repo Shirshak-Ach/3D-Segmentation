@@ -110,6 +110,11 @@ def training_phase(train_dataloader, test_dataloader):
                 
     #             print(epoch_test_loss)
                 
+                torch.save({'epoch': epoch,
+                    'model_state_dict': model.state_dict(),
+                    'optimizer_state_dict': optimizer.state_dict(),
+                   },checkpoint_path)
+                
             overall_test_loss_per_epoch.append(test_loss.item()) 
             overall_test_jaccard_per_epoch.append(epoch_test_jaccard)
             overall_test_acc_per_epoch.append(epoch_test_acc)
@@ -141,15 +146,21 @@ if __name__ == '__main__':
     device_type = config_params["training_params"]["device_type"]
     optimizer = config_params["training_params"]["optimizer"]
 
-    # device_name = config_params[]
-    # device = torch.device("cuda" if torch.cuda.is_available() else "cpu") 
+    
+    device = torch.device("cuda")
+    # print(device)
+    if torch.cuda.is_available():
+        device = "cuda:1"
+    else:
+        device = "cpu"
+    # print(torch.cuda.get_device_name())
 
-    # t2_location = '/mnt/Enterprise2/shirshak/BraTS2020_TrainingData/MICCAI_BraTS2020_TrainingData/*/*t2.nii'
-    # t1ce_location = '/mnt/Enterprise2/shirshak/BraTS2020_TrainingData/MICCAI_BraTS2020_TrainingData/*/*t1ce.nii'
-    # flair_location = '/mnt/Enterprise2/shirshak/BraTS2020_TrainingData/MICCAI_BraTS2020_TrainingData/*/*flair.nii'
-    # mask_location = '/mnt/Enterprise2/shirshak/BraTS2020_TrainingData/MICCAI_BraTS2020_TrainingData/*/*seg.nii'
+    t2_location = '/mnt/Enterprise2/shirshak/BraTS2020_TrainingData/MICCAI_BraTS2020_TrainingData/*/*t2.nii'
+    t1ce_location = '/mnt/Enterprise2/shirshak/BraTS2020_TrainingData/MICCAI_BraTS2020_TrainingData/*/*t1ce.nii'
+    flair_location = '/mnt/Enterprise2/shirshak/BraTS2020_TrainingData/MICCAI_BraTS2020_TrainingData/*/*flair.nii'
+    mask_location = '/mnt/Enterprise2/shirshak/BraTS2020_TrainingData/MICCAI_BraTS2020_TrainingData/*/*seg.nii'
 
-    # train_dataloader, test_dataloader = get_from_loader(t2_location,t1ce_location,flair_location,mask_location)
+    train_dataloader, test_dataloader = get_from_loader(t2_location,t1ce_location,flair_location,mask_location)
 
 
     model, num_epochs,optimizer, loss, overall_train_loss_per_epoch, overall_train_jaccard_per_epoch, overall_train_acc_per_epoch, overall_test_loss_per_epoch, overall_test_jaccard_per_epoch, overall_test_acc_per_epoch = training_phase(train_dataloader,test_dataloader)
@@ -198,13 +209,13 @@ if __name__ == '__main__':
 
 
 
-    # Save the model
-    torch.save({
-        'epoch': num_epochs,
-        'model_state_dict': model.state_dict(),
-        'optimizer_state_dict': optimizer.state_dict(),
-        'loss': loss,
-    }, 'saved_model.pth')
+    # # Save the model
+    # torch.save({
+    #     'epoch': num_epochs,
+    #     'model_state_dict': model.state_dict(),
+    #     'optimizer_state_dict': optimizer.state_dict(),
+    #     'loss': loss,
+    # }, 'saved_model.pth')
 
     # Load the model
     loaded_model = Build_UNet()
