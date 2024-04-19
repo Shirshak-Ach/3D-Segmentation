@@ -39,7 +39,7 @@ def training_phase(train_dataloader, test_dataloader):
         print(f"Resuming training from epoch {start_epoch}")
 
 
-    for epoch in range(1,num_epochs+1):
+    for epoch in range(start_epoch,num_epochs+1):
         epoch_train_loss = 0.0
         epoch_test_loss = 0.0  
         metrics_score = [0.0, 0.0]
